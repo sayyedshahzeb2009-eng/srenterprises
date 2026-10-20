@@ -50,7 +50,7 @@ A GitHub Pages site has no private admin database or protected store dashboard. 
 
 ## Security and privacy
 - This is a public static website. Never commit API keys, passwords, private tokens or customer lists to this repository.
-- A restrictive Content Security Policy meta tag is being added to limit scripts to the same origin, disallow plugins and restrict base URLs. GitHub Pages does not let this project set every HTTP response security header; full server-side controls require suitable hosting/backend configuration.
+- A restrictive Content Security Policy meta tag is included to limit scripts to the same origin, disallow plugins and restrict base URLs. GitHub Pages does not let this project set every HTTP response security header; full server-side controls require suitable hosting/backend configuration.
 - Product catalogue text is escaped where inserted into HTML, feature text uses text nodes, and product images are restricted to HTTPS in the browser. This is defence-in-depth, not a substitute for server-side validation if a backend is added.
 - The current contact flow does not submit personal details to a server. A future contact endpoint or AI model should use server-side validation, rate limiting, spam protection and API keys stored only in deployment environment variables.
 
