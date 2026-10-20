@@ -90,7 +90,7 @@ The repository now includes the first backend implementation:
 - `/api/chat` — server-side AI replies. The OpenAI key stays on the server; the prompt uses verified catalogue data and instructs the assistant not to invent prices, stock, policies or specifications.
 - `/api/products` — public read-only product catalogue endpoint.
 - `/api/admin-products` — product CRUD protected by Supabase Auth and an exact `ADMIN_EMAIL` allow-list.
-- `/api/admin-upload` — authenticated photo uploads (JPG, PNG, WebP or AVIF, max 4 MB) to the Supabase Storage bucket.
+- `/api/admin-upload` — authenticated photo uploads (JPG, PNG, WebP or AVIF, max 3 MB) to the Supabase Storage bucket.
 - `/admin.html` — mobile-friendly private dashboard for adding, editing and deleting products, including photo upload.
 - `supabase/schema.sql` — database table, row-level security and product image bucket setup.
 - `vercel.json` — response security headers. API rate limiting in the chat function is best-effort per serverless instance; for a production launch, add a shared rate limiter / edge firewall and monitor abuse.
