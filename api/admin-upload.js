@@ -1,6 +1,6 @@
 const crypto = require("crypto");
 const { send, method, originOk, env, requireAdmin } = require("../lib/server");
-const MAX_BYTES = 4 * 1024 * 1024;
+const MAX_BYTES = 3 * 1024 * 1024;
 const TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/avif"]);
 module.exports = async function handler(req, res) {
   if (!method(req, res, ["POST"])) return;
@@ -12,9 +12,11 @@ module.exports = async function handler(req, res) {
     const name = String(body.name || "photo").slice(0, 120);
     const base64 = String(body.base64 || "");
     if (!TYPES.has(type)) return send(res, 415, { error: "Use a JPG, PNG, WebP or AVIF image." });
-    if (!base64 || base64.length > Math.ceil(MAX_BYTES * 4 / 3) + 100) return send(res, 413, { error: "Image must be 4 MB or smaller." });
+    if (!base64 || base64.length > Math.ceil(MAX_BYTES * 4 / 3) + 100) return send(res, 413, { error: "Image must be 3 MB or smaller." });
     const bytes = Buffer.from(base64, "base64");
-    if (!bytes.length || bytes.length > MAX_BYTES) return send(res, 413, { error: "Image must be 4 MB or smaller." });
+    if (!bytes.length || bytes.length > MAX_BYTES) return send(res, 413, { error: "Image must be 3 MB or smaller." });
+    const validBytes = type === "image/jpeg" ? bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff : type === "image/png" ? bytes.subarray(0, 8).equals(Buffer.from([137,80,78,71,13,10,26,10])) : type === "image/webp" ? bytes.toString("ascii", 0, 4) === "RIFF" && bytes.toString("ascii", 8, 12) === "WEBP" : bytes.toString("ascii", 4, 12).includes("ftypavif") || bytes.toString("ascii", 4, 12).includes("ftypavis");
+    if (!validBytes) return send(res, 415, { error: "The file contents do not match the selected image type." });
     const ext = ({ "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "image/avif": "avif" })[type];
     const safeName = name.normalize("NFKD").replace(/[^a-zA-Z0-9-_]/g, "-").replace(/-+/g, "-").slice(0, 40) || "product-photo";
     const path = safeName + "-" + crypto.randomUUID() + "." + ext;
