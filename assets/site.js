@@ -4,7 +4,7 @@ const concierge=$('[data-concierge]');
 if(concierge){
  const launcher=$('.concierge-launcher',concierge),panel=$('.concierge-panel',concierge),close=$('.concierge-close',concierge),messages=$('[data-concierge-messages]',concierge),form=$('[data-concierge-form]',concierge),input=$('#concierge-question',concierge);
  const addMessage=(text,kind='bot',html='')=>{const node=document.createElement('div');node.className='concierge-message concierge-'+kind;node.textContent=text;if(html){const extra=document.createElement('div');extra.innerHTML=html;node.append(...extra.childNodes)}messages.appendChild(node);messages.scrollTop=messages.scrollHeight};
- const link=(href,label)=>'<a href="'+href+'">'+label+' ↗</a>';
+ const link=(href,label)=>'<a href="'+esc(href)+'">'+esc(label)+' ↗</a>';
  const products=window.SR_PRODUCTS||[];
  const answer=(raw)=>{
   const q=raw.toLowerCase().trim();
