@@ -25,5 +25,5 @@ create index if not exists products_active_created_at_idx
 
 -- Public read-only bucket for approved product photography. Uploads still go through the authenticated Vercel API.
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-values ('product-images', 'product-images', true, 4194304, array['image/jpeg','image/png','image/webp','image/avif'])
-on conflict (id) do update set public = true, file_size_limit = 4194304, allowed_mime_types = array['image/jpeg','image/png','image/webp','image/avif'];
+values ('product-images', 'product-images', true, 3145728, array['image/jpeg','image/png','image/webp','image/avif'])
+on conflict (id) do update set public = true, file_size_limit = 3145728, allowed_mime_types = array['image/jpeg','image/png','image/webp','image/avif'];
