@@ -37,7 +37,7 @@ Expected site URL: https://sayyedshahzeb2009-eng.github.io/srenterprises/
 - **Product content is a showcase draft.** The names, descriptions and images are concept presentation content, not a verified inventory. Confirm every actual SKU, fabric composition, frame / filling construction, dimensions, finish, price, availability and warranty with the business.
 - Images are externally hosted visual references. Replace them with SR Enterprises' approved product photography before launch.
 - The website does not currently process payments, manage stock, or create orders.
-- The contact form opens a pre-filled email draft; it does not send automatically or store form data. A visitor must send the email themselves. If their device has no email application configured, they can use Instagram.
+- The contact form prepares an enquiry message on-screen and opens the official Instagram profile in a new tab. It does not send automatically or store form data; the visitor must copy the message into Instagram and send it. The profile is the available contact route until a business email / phone number is supplied.
 - Phone / WhatsApp details have not been added yet.
 - Confirm the exact visit address, appointment process, delivery zones, charges, installation scope, lead times, cancellation and return policy before publishing those claims.
 - External images and Google Fonts require an internet connection.
