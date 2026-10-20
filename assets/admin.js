@@ -55,12 +55,12 @@ async function loadEnquiries(){
    if(item.message){const row=document.createElement("div");row.className="enquiry-message";const strong=document.createElement("strong");strong.textContent="Message";const p=document.createElement("p");p.textContent=item.message;row.append(strong,p);details.append(row)}
    card.append(details);
    const actions=document.createElement("div");actions.className="enquiry-actions";
-   const email=document.createElement("a");email.className="secondary link-button";email.href="mailto:"+encodeURIComponent(String(item.email||""))+"?subject="+encodeURIComponent("Re: SR Enterprises enquiry");email.textContent="Reply by email ↗";actions.append(email);
+   const email=document.createElement("a");email.className="secondary link-button";email.href="mailto:"+String(item.email||"")+"?subject="+encodeURIComponent("Re: SR Enterprises enquiry");email.textContent="Reply by email ↗";actions.append(email);
    const select=document.createElement("select");select.setAttribute("aria-label","Update enquiry status");[["new","New"],["contacted","Contacted"],["closed","Closed"]].forEach(([v,label])=>{const o=document.createElement("option");o.value=v;o.textContent=label;select.append(o)});select.value=item.status||"new";
    select.addEventListener("change",async()=>{select.disabled=true;try{await json("/api/enquiries",{method:"PATCH",headers:authHeaders(),body:JSON.stringify({id:item.id,status:select.value})});if(note)note.textContent="Enquiry status updated.";await loadEnquiries()}catch(err){if(note){note.textContent=err.message;note.classList.add("error")}select.value=item.status||"new"}finally{select.disabled=false}});
    actions.append(select);card.append(actions);list.append(card);
   });
-  if(note)note.textContent="Private inbox loaded · "+items.length+" enquiry"+(items.length===1?"":"ies")+".";
+  if(note)note.textContent="Private inbox loaded · "+items.length+" "+(items.length===1?"enquiry":"enquiries")+".";
  }catch(err){if(note){note.textContent=err.message;note.classList.add("error")}if(list){list.replaceChildren();const p=document.createElement("p");p.className="muted";p.textContent="Could not load enquiries. Check that the Supabase enquiries table has been created.";list.append(p)}}
 }
 $("#refresh-enquiries")?.addEventListener("click",loadEnquiries);
