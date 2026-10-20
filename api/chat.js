@@ -1,4 +1,4 @@
-const { send, method, env, supabase } = require("../lib/server");
+const { send, method, originOk, env, supabase } = require("../lib/server");
 const hits = new Map();
 function rateLimit(req) {
   const key = String(req.headers["x-forwarded-for"] || "unknown").split(",")[0].trim();
@@ -12,6 +12,7 @@ function rateLimit(req) {
 }
 module.exports = async function handler(req, res) {
   if (!method(req, res, ["POST"])) return;
+  if (!originOk(req, res)) return;
   if (!process.env.OPENAI_API_KEY) return send(res, 503, { error: "The AI concierge is being configured. Please email srenterprises05050@gmail.com for assistance." });
   if (!rateLimit(req)) return send(res, 429, { error: "Please wait a moment before asking another question." });
   const body = typeof req.body === "string" ? (() => { try { return JSON.parse(req.body); } catch { return {}; } })() : (req.body || {});
