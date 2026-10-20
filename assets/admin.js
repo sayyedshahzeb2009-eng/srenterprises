@@ -8,7 +8,7 @@ const authHeaders=()=>({"Content-Type":"application/json",Authorization:"Bearer 
 async function json(url,options={}){const r=await fetch(url,options);let d={};try{d=await r.json()}catch{}if(!r.ok)throw new Error(d.error||"Request failed. Please try again.");return d}
 async function init(){try{config=await json("/api/config")}catch{setStatus("Backend not configured. Add the required Vercel environment variables and redeploy.",true);loginForm.querySelector("button").disabled=true}}
 init();
-function switchView(id){$$(".admin-view").forEach(v=>v.hidden=v.id!==id);$$(".nav-tab").forEach(b=>b.classList.toggle("active",b.dataset.view===id));if(id==="media-view")renderMedia();if(id==="overview")renderOverview();if(innerWidth<760)$("#dashboard").scrollIntoView({behavior:"smooth",block:"start"})}
+function switchView(id){$(".admin-view").forEach(v=>v.hidden=v.id!==id);$(".nav-tab").forEach(b=>b.classList.toggle("active",b.dataset.view===id));if(id==="media-view")renderMedia();if(id==="overview")renderOverview();if(id==="enquiries-view")loadEnquiries();if(innerWidth<760)$("#dashboard").scrollIntoView({behavior:"smooth",block:"start"})}
 $$(".nav-tab").forEach(b=>b.addEventListener("click",()=>switchView(b.dataset.view)));
 $$("[data-go]").forEach(b=>b.addEventListener("click",()=>{switchView(b.dataset.go);if(b.dataset.new==="true")reset()}));
 loginForm.addEventListener("submit",async e=>{e.preventDefault();if(!config)return;const button=loginForm.querySelector("button");button.disabled=true;button.textContent="Verifying securely…";try{const email=$("#login-email").value.trim();const d=await json(config.supabaseUrl.replace(/\/$/,"")+"/auth/v1/token?grant_type=password",{method:"POST",headers:{"Content-Type":"application/json",apikey:config.supabaseAnonKey},body:JSON.stringify({email,password:$("#login-password").value})});if(!d.access_token)throw new Error("Sign-in failed.");token=d.access_token;adminEmail=email;$("#login-password").value="";await loadProducts();loginPanel.hidden=true;dashboard.hidden=false;$("#admin-email-label").textContent=adminEmail;$("#settings-email").textContent=adminEmail;setStatus("");switchView("overview");runHealthCheck().catch(()=>{});loadContactSettings().catch(()=>{});}catch(err){token=null;setStatus(err.message,true)}finally{button.disabled=false;button.innerHTML='Sign in securely <span>↗</span>'}});
@@ -30,6 +30,40 @@ async function runHealthCheck(){if(!token)return;["health-api","health-catalogue
 $("#health-check").addEventListener("click",runHealthCheck);$("#settings-health").addEventListener("click",runHealthCheck);$("#refresh-data").addEventListener("click",async()=>{const b=$("#refresh-data");b.disabled=true;try{await loadProducts();await runHealthCheck()}catch(err){setStatus(err.message,true)}finally{b.disabled=false}});$("#refresh-media").addEventListener("click",async()=>{const b=$("#refresh-media");b.disabled=true;try{await loadProducts();renderMedia()}catch(err){alert(err.message)}finally{b.disabled=false}});
 function logout(){token=null;products=[];dashboard.hidden=true;loginPanel.hidden=false;loginForm.reset();reset();setStatus("You have signed out.");$("#health-auth").textContent="Signed out"}$("#logout").addEventListener("click",logout);$("#settings-logout").addEventListener("click",logout);
 
+async function loadEnquiries(){
+ const list=$("#enquiry-list"),note=$("#enquiry-status");
+ if(!token){if(note)note.textContent="Sign in to view private enquiries.";return}
+ if(note){note.textContent="Loading private inbox…";note.classList.remove("error")}
+ if(list){list.replaceChildren();const p=document.createElement("p");p.className="muted";p.textContent="Loading enquiries…";list.append(p)}
+ try{
+  const d=await json("/api/enquiries",{headers:authHeaders()});
+  const items=Array.isArray(d.enquiries)?d.enquiries:[];
+  $("#enquiry-total").textContent=items.length;
+  $("#enquiry-new").textContent=items.filter(x=>x.status==="new").length;
+  list.replaceChildren();
+  if(!items.length){const empty=document.createElement("article");empty.className="panel";const p=document.createElement("p");p.className="muted";p.textContent="No enquiries received yet. New website submissions will appear here.";empty.append(p);list.append(empty)}
+  items.forEach(item=>{
+   const card=document.createElement("article");card.className="panel enquiry-card";
+   const head=document.createElement("div");head.className="enquiry-card-head";
+   const title=document.createElement("div");const h=document.createElement("h3");h.textContent=item.name||"Customer";const date=document.createElement("p");date.className="muted";date.textContent=item.created_at?new Date(item.created_at).toLocaleString():"Date unavailable";title.append(h,date);
+   const badge=document.createElement("span");badge.className="enquiry-badge "+(item.status||"new");badge.textContent=(item.status||"new").replace(/^./,c=>c.toUpperCase());head.append(title,badge);card.append(head);
+   const details=document.createElement("div");details.className="enquiry-details";
+   const addDetail=(label,value)=>{const row=document.createElement("p");const strong=document.createElement("strong");strong.textContent=label+": ";row.append(strong,document.createTextNode(String(value||"—")));details.append(row)};
+   addDetail("Email",item.email);addDetail("Interested in",item.interest);
+   if(item.product_name)addDetail("Product",item.product_name);
+   if(item.product_id)addDetail("Product ID",item.product_id);
+   if(item.message){const row=document.createElement("div");row.className="enquiry-message";const strong=document.createElement("strong");strong.textContent="Message";const p=document.createElement("p");p.textContent=item.message;row.append(strong,p);details.append(row)}
+   card.append(details);
+   const actions=document.createElement("div");actions.className="enquiry-actions";
+   const email=document.createElement("a");email.className="secondary link-button";email.href="mailto:"+encodeURIComponent(String(item.email||""))+"?subject="+encodeURIComponent("Re: SR Enterprises enquiry");email.textContent="Reply by email ↗";actions.append(email);
+   const select=document.createElement("select");select.setAttribute("aria-label","Update enquiry status");[["new","New"],["contacted","Contacted"],["closed","Closed"]].forEach(([v,label])=>{const o=document.createElement("option");o.value=v;o.textContent=label;select.append(o)});select.value=item.status||"new";
+   select.addEventListener("change",async()=>{select.disabled=true;try{await json("/api/enquiries",{method:"PATCH",headers:authHeaders(),body:JSON.stringify({id:item.id,status:select.value})});if(note)note.textContent="Enquiry status updated.";await loadEnquiries()}catch(err){if(note){note.textContent=err.message;note.classList.add("error")}select.value=item.status||"new"}finally{select.disabled=false}});
+   actions.append(select);card.append(actions);list.append(card);
+  });
+  if(note)note.textContent="Private inbox loaded · "+items.length+" enquiry"+(items.length===1?"":"ies")+".";
+ }catch(err){if(note){note.textContent=err.message;note.classList.add("error")}if(list){list.replaceChildren();const p=document.createElement("p");p.className="muted";p.textContent="Could not load enquiries. Check that the Supabase enquiries table has been created.";list.append(p)}}
+}
+$("#refresh-enquiries")?.addEventListener("click",loadEnquiries);
 async function loadContactSettings(){try{const d=await json("/api/contact-settings");$("#contact-phone").value=d.phone||"";$("#contact-email").value=d.email||"";$("#contact-settings-status").textContent="Current public enquiry settings loaded."}catch(err){$("#contact-settings-status").textContent=err.message+" If the settings table is new, run supabase/contact-settings.sql in Supabase SQL Editor.";$("#contact-settings-status").classList.add("error")}}
 $("#contact-settings-form")?.addEventListener("submit",async e=>{e.preventDefault();if(!token)return;const b=$("#save-contact-settings");const note=$("#contact-settings-status");b.disabled=true;note.classList.remove("error");note.textContent="Saving contact details securely…";try{const d=await json("/api/contact-settings",{method:"PUT",headers:authHeaders(),body:JSON.stringify({phone:$("#contact-phone").value.trim(),email:$("#contact-email").value.trim()})});note.textContent="Saved. Public inquiry buttons now use the configured phone/email. Instagram remains display-only.";note.classList.remove("error");}catch(err){note.textContent=err.message;note.classList.add("error")}finally{b.disabled=false}});
 })();
