@@ -18,6 +18,11 @@ Example product URLs:
 - `product.html?id=solace-bed`
 - `product.html?id=forma-dining-table`
 
+## Email and SR Concierge
+- Official contact email: srenterprises05050@gmail.com
+- The floating **SR Concierge** widget appears across the site and answers common website-related questions about the product catalogue, material notes, dimensions, care, enquiries and contact information. It intentionally declines unrelated topics.
+- This first version runs locally in the browser from the published catalogue and fixed website knowledge. It does not send visitor chats to a server and does not require an API key. It is a guided website assistant, not a connected generative AI model; a true LLM-powered agent needs a secure server/API route and protected API key, which cannot be safely embedded in a public GitHub Pages frontend.
+
 ## Design / interaction
 - Shared responsive styling in `assets/site.css`
 - Shared behaviour in `assets/site.js`
