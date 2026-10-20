@@ -121,3 +121,15 @@ The repository now includes the first backend implementation:
 - Chat API rate limiting in this starter is per serverless instance, not a global abuse-proof limiter. Add a shared rate limiter and WAF/edge protection before heavy public traffic.
 - Product images are public because they appear on the public website. Do not upload private/customer images.
 - The old GitHub Pages deployment remains static: AI server calls and private admin CRUD only work on the configured Vercel deployment.
+
+## Admin-managed inquiry contact details
+
+The private admin panel can save a business phone number and enquiry email used by the public product enquiry buttons and contact form. Instagram is a display-only social profile and is not an enquiry destination.
+
+One-time setup:
+1. In Supabase SQL Editor, run `supabase/contact-settings.sql`.
+2. Confirm Vercel Production has `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `ADMIN_EMAIL`, and `SITE_ORIGIN` configured, then redeploy.
+3. Sign in at `/admin.html`, open **Settings**, enter the public business phone and enquiry email, and save. At least one field is required.
+4. Test a product's **Enquire about this piece** button and the contact form. Email enquiries open the customer's email application; phone enquiries use a `tel:` link. The website does not store form submissions.
+
+The public API returns only the customer-facing phone/email values. Writes are authenticated and restricted to the confirmed admin email. Never place the Supabase service-role key in browser code or chat.
