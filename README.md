@@ -82,3 +82,42 @@ Expected site URL: https://sayyedshahzeb2009-eng.github.io/srenterprises/
 - Brand: SR Enterprises
 - Instagram: https://www.instagram.com/srenterprises.india/
 - Location supplied for the site: Sakinaka / Tilak Nagar, Mumbai, Maharashtra 400072
+
+
+## Secure AI concierge and private product admin (Vercel + Supabase)
+
+The repository now includes the first backend implementation:
+- `/api/chat` — server-side AI replies. The OpenAI key stays on the server; the prompt uses verified catalogue data and instructs the assistant not to invent prices, stock, policies or specifications.
+- `/api/products` — public read-only product catalogue endpoint.
+- `/api/admin-products` — product CRUD protected by Supabase Auth and an exact `ADMIN_EMAIL` allow-list.
+- `/api/admin-upload` — authenticated photo uploads (JPG, PNG, WebP or AVIF, max 4 MB) to the Supabase Storage bucket.
+- `/admin.html` — mobile-friendly private dashboard for adding, editing and deleting products, including photo upload.
+- `supabase/schema.sql` — database table, row-level security and product image bucket setup.
+- `vercel.json` — response security headers. API rate limiting in the chat function is best-effort per serverless instance; for a production launch, add a shared rate limiter / edge firewall and monitor abuse.
+
+### One-time setup required before the live admin and AI features work
+
+1. Import this GitHub repository into a Vercel project and deploy it. GitHub Pages cannot run the `/api/*` server functions; keep the GitHub Pages site as a fallback until the Vercel deployment is tested.
+2. Create a Supabase project. In its SQL Editor, run the full `supabase/schema.sql` file.
+3. In Supabase Authentication, create the owner/admin user and confirm the email. Set the same email as `ADMIN_EMAIL` in Vercel. Enable email/password sign-in and use a strong unique password plus any available MFA option.
+4. Add these Vercel Environment Variables for Production (and Preview only if you intend to test admin there):
+   - `SUPABASE_URL` — project URL
+   - `SUPABASE_ANON_KEY` — publishable/anon key
+   - `SUPABASE_SERVICE_ROLE_KEY` — secret service-role key; **never put this in frontend code or GitHub**
+   - `ADMIN_EMAIL` — the single allowed admin email
+   - `OPENAI_API_KEY` — secret key for the AI concierge
+   - `OPENAI_MODEL` — optional; defaults to `gpt-4.1-mini`
+   - `SITE_ORIGIN` — exact deployed origin, e.g. `https://your-project.vercel.app` (no trailing slash). Set it after you know the final deployment URL.
+5. Redeploy after adding environment variables.
+6. Open `/admin.html` on the Vercel domain and sign in. If the database is empty, click **Import starter catalogue** once. Existing example items are illustrative: verify names, image rights, actual materials, measurements, prices and policies before promoting them to customers.
+7. Add a new item with a unique ID such as `oak-coffee-table`, upload images or paste HTTPS image URLs, complete the verified fields, and click **Publish product**. Updates save to the database and the public catalogue / AI concierge read from that catalogue when the Vercel site is used.
+
+### Security notes
+
+- The Supabase service-role key and OpenAI API key belong only in Vercel Environment Variables. Never commit them, put them in HTML/JS, or share them in chat.
+- The admin checks a valid Supabase session and exact admin email on the server for every management/upload request. The database has RLS enabled and no public table policies.
+- The public Supabase anon key is intentionally returned by `/api/config` for sign-in; it is not a secret. Access control relies on server-side authorization and database policy, not on hiding this key.
+- The admin is not a complete guarantee against compromise. Use a unique password, MFA where available, restrict GitHub/Vercel/Supabase account access, keep recovery methods safe, review logs, and rotate any exposed secret immediately.
+- Chat API rate limiting in this starter is per serverless instance, not a global abuse-proof limiter. Add a shared rate limiter and WAF/edge protection before heavy public traffic.
+- Product images are public because they appear on the public website. Do not upload private/customer images.
+- The old GitHub Pages deployment remains static: AI server calls and private admin CRUD only work on the configured Vercel deployment.
