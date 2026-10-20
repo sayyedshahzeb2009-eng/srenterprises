@@ -10,10 +10,10 @@
 <header class="top"><a class="brand" href="index.html">SR <span>ENTERPRISES</span></a><span class="private">PRIVATE ADMIN</span></header>
 <main class="wrap">
 <section class="intro"><p class="eyebrow">OWNER WORKSPACE</p><h1>Furniture, <em>beautifully managed.</em></h1><p>Add new pieces, update details and publish changes from your phone. Only the authorized admin account can save changes.</p></section>
-<section class="panel login" id="login-panel"><h2>Secure sign in</h2><p>Use the confirmed admin account configured for this website.</p><form id="login-form"><label>Email<input id="login-email" type="email" autocomplete="username" required maxlength="254"></label><label>Password<input id="login-password" type="password" autocomplete="current-password" required minlength="8" maxlength="200"></label><button class="primary" type="submit">Sign in securely <span>↗</span></button><p class="hint">If sign-in is not configured yet, complete the setup steps in README.md first.</p></form></section>
+<section class="panel login" id="login-panel"><h2>Secure sign in</h2><p>Use the confirmed admin account configured for this website.</p><form id="login-form"><label>Email<input id="login-email" type="email" autocomplete="username" required maxlength="254"></label><label>Password<input id="login-password" type="password" autocomplete="current-password" required minlength="8" maxlength="200"></label><button class="primary" type="submit">Sign in securely <span>↗</span></button><p class="hint">If sign-in is not configured yet, complete the setup steps in README.md first.</p><p id="login-status" class="status" role="status" aria-live="polite"></p></form></section>
 <section id="dashboard" hidden>
 <div class="toolbar"><div><p class="eyebrow">CATALOGUE</p><h2>Your products</h2><p class="muted" id="product-count">Loading catalogue…</p></div><button id="new-product" class="primary" type="button">＋ Add product</button></div>
-<div class="layout"><aside class="panel product-list"><h3>All products</h3><div id="product-list"></div><button class="secondary" id="logout" type="button">Sign out</button></aside>
+<div class="layout"><aside class="panel product-list"><h3>All products</h3><div id="product-list"></div><button class="secondary" id="import-catalog" type="button">Import starter catalogue</button><button class="secondary" id="logout" type="button">Sign out</button></aside>
 <section class="panel editor"><div class="editor-heading"><div><p class="eyebrow">PRODUCT EDITOR</p><h2 id="editor-title">Add a product</h2></div><span class="draft-pill">Draft until saved</span></div>
 <form id="product-form">
 <div class="fields">
@@ -41,5 +41,5 @@
 </form></section></div>
 </section>
 <footer>SR Enterprises · Secure owner workspace · <a href="index.html">Return to website</a></footer>
-</main><script src="assets/admin.js" defer></script>
+</main><script src="assets/products.js" defer></script><script src="assets/admin.js" defer></script>
 </body></html>
