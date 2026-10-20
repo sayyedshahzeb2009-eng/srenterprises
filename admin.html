@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https: data:; connect-src 'self' https://*.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests">
+<title>Private Admin — SR Enterprises</title><link rel="stylesheet" href="assets/admin.css">
+</head>
+<body>
+<header class="top"><a class="brand" href="index.html">SR <span>ENTERPRISES</span></a><span class="private">PRIVATE ADMIN</span></header>
+<main class="wrap">
+<section class="intro"><p class="eyebrow">OWNER WORKSPACE</p><h1>Furniture, <em>beautifully managed.</em></h1><p>Add new pieces, update details and publish changes from your phone. Only the authorized admin account can save changes.</p></section>
+<section class="panel login" id="login-panel"><h2>Secure sign in</h2><p>Use the confirmed admin account configured for this website.</p><form id="login-form"><label>Email<input id="login-email" type="email" autocomplete="username" required maxlength="254"></label><label>Password<input id="login-password" type="password" autocomplete="current-password" required minlength="8" maxlength="200"></label><button class="primary" type="submit">Sign in securely <span>↗</span></button><p class="hint">If sign-in is not configured yet, complete the setup steps in README.md first.</p></form></section>
+<section id="dashboard" hidden>
+<div class="toolbar"><div><p class="eyebrow">CATALOGUE</p><h2>Your products</h2><p class="muted" id="product-count">Loading catalogue…</p></div><button id="new-product" class="primary" type="button">＋ Add product</button></div>
+<div class="layout"><aside class="panel product-list"><h3>All products</h3><div id="product-list"></div><button class="secondary" id="logout" type="button">Sign out</button></aside>
+<section class="panel editor"><div class="editor-heading"><div><p class="eyebrow">PRODUCT EDITOR</p><h2 id="editor-title">Add a product</h2></div><span class="draft-pill">Draft until saved</span></div>
+<form id="product-form">
+<div class="fields">
+<label>Product name *<input name="name" required maxlength="120" placeholder="e.g. Solace Bed"></label>
+<label>Unique product ID *<input name="id" required pattern="[a-z0-9]+(-[a-z0-9]+)*" maxlength="80" placeholder="e.g. oak-coffee-table"></label>
+<label>Category *<select name="category" required><option value="Sofas">Sofas</option><option value="Chairs">Chairs</option><option value="Beds">Beds</option><option value="Tables">Tables</option><option value="Storage">Storage</option><option value="Other">Other</option></select></label>
+<label>Price shown on website<input name="price" maxlength="100" placeholder="Request a quote"></label>
+<label>Label / tag<input name="tag" maxlength="80" placeholder="New arrival"></label>
+<label>Short subtitle<input name="subtitle" maxlength="160" placeholder="A softer kind of statement"></label>
+<label class="wide">Main image HTTPS URL *<input name="hero" type="url" required placeholder="https://…"></label>
+<label>Second image URL<input name="image2" type="url" placeholder="https://…"></label><label>Third image URL<input name="image3" type="url" placeholder="https://…"></label>
+<label class="wide">Short description *<textarea name="short" required maxlength="500" rows="2"></textarea></label>
+<label class="wide">Full description *<textarea name="description" required maxlength="3000" rows="4"></textarea></label>
+<label>Materials (verified only)<textarea name="materials" maxlength="3000" rows="3"></textarea></label>
+<label>Dimensions<textarea name="dimensions" maxlength="500" rows="3"></textarea></label>
+<label>Available finishes<textarea name="finish" maxlength="500" rows="2"></textarea></label>
+<label>Comfort / use<textarea name="comfort" maxlength="500" rows="2"></textarea></label>
+<label>Care instructions<textarea name="care" maxlength="3000" rows="3"></textarea></label>
+<label>Availability / lead time<textarea name="lead" maxlength="3000" rows="3"></textarea></label>
+<label class="wide">Features (one per line, max 20)<textarea name="features" rows="4" placeholder="Solid-looking silhouette&#10;Finish options by enquiry"></textarea></label>
+</div>
+<div class="preview" id="image-preview-wrap" hidden><img id="image-preview" alt="Product preview"><span>Image preview</span></div>
+<div class="actions"><button class="primary" id="save-product" type="submit">Publish product <span>↗</span></button><button class="secondary" id="cancel-edit" type="button">Clear form</button><button class="danger" id="delete-product" type="button" hidden>Delete product</button></div>
+<p id="status" class="status" role="status" aria-live="polite"></p><p class="hint">Only publish images and specifications you have permission to use and have verified. Changes update the catalogue and chatbot once the public site is connected to this API.</p>
+</form></section></div>
+</section>
+<footer>SR Enterprises · Secure owner workspace · <a href="index.html">Return to website</a></footer>
+</main><script src="assets/admin.js" defer></script>
+</body></html>
